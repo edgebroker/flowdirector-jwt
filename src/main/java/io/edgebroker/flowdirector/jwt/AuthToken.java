@@ -5,6 +5,8 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 
+import java.util.Date;
+
 public class AuthToken {
 
     private Algorithm algorithm;
@@ -22,7 +24,7 @@ public class AuthToken {
         return this;
     }
 
-    private AuthToken decodeJwt() throws Exception {
+    public AuthToken decodeJwt() throws Exception {
 
         if (this.token == null) {
             throw new Exception("Token not set.");
@@ -39,6 +41,7 @@ public class AuthToken {
     public String fromId(int id) {
         return JWT.create()
                 .withClaim("id", id)
+                .withIssuedAt(new Date())
                 .withIssuer(issuer)
                 .sign(algorithm);
     }
@@ -56,9 +59,10 @@ public class AuthToken {
         AuthToken authToken = new AuthToken("secret", "flowdirector");
 
         String token =  authToken.fromId(100);
+        System.out.println("Token:");
         System.out.println(token);
-
         int id = authToken.setToken(token).decodeJwt().getId();
+        System.out.println("Decoded ID:");
         System.out.println(id);
     }
 }
